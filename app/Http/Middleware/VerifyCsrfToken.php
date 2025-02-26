@@ -12,13 +12,6 @@ class VerifyCsrfToken extends Middleware
      * @var array
      */
     protected $except = [
-        '*-webhook/*',
-        '*_webhook/*',
-        '*_webhook',
-        '*-webhook',
-        '/lead-form/leadStore',
-        '/lead-form/ticket-store',
-        '/billing-verify-webhook/*',
-        '*/payfast-notification/*'
+        //
     ];
 }
