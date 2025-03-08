@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,6 +14,6 @@
 |
 */
 
-ApiRoute::group(['namespace' => 'App\Http\Controllers'], function () {
-    ApiRoute::get('purchased-module', ['as' => 'api.purchasedModule', 'uses' => 'HomeController@installedModule']);
+Route::middleware('auth:api')->get('/user', function (Request $request) {
+    return $request->user();
 });
