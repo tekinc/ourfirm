@@ -311,6 +311,10 @@ class Project extends BaseModel
 
         $projects = $projects->leftJoin('project_members', 'project_members.project_id', 'projects.id')
             ->select('projects.*')
+            ->where(function ($query) {
+                $query->where('projects.calculate_task_progress', false)
+                    ->orWhere('projects.completion_percent', '<>', 100);
+            })
             ->orderBy('project_name');
 
 

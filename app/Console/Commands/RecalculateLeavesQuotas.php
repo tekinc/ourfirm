@@ -151,7 +151,7 @@ class RecalculateLeavesQuotas extends Command
 
                         if ($value->leavetype == 'monthly' && $value->unused_leave != 'carry forward') {
                             if ($noOfLeavesTaken > 0) {
-                                $noOfOverutilisedLeaves = abs($noOfLeavesTaken - $noOfLeavesAlloted);
+                                // $noOfOverutilisedLeaves = abs($noOfLeavesTaken - $noOfLeavesAlloted);
                             }
 
                             $noOfCurrentMonthLeaves = $this->calculateNoOfLeavesTakenCurrentMonth($settings, $user, $value);

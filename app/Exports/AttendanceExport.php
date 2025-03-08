@@ -131,6 +131,14 @@ class AttendanceExport implements FromCollection, WithHeadings, WithMapping, Wit
             $employees->where('employee_details.designation_id', $this->designation);
         }
 
+        $employees->where(function ($query) use ($startDate, $endDate) {
+            $query->where('users.status','active')
+                  ->orWhere(function ($subQuery) use ($startDate, $endDate) {
+                      $subQuery->whereRaw('YEAR(users.inactive_date) >= ?', [$startDate->format('Y')])
+                            ->whereRaw('MONTH(users.inactive_date) >= ?', [$endDate->format('m')]);
+                  });
+        });
+
         $employees = $employees->select('users.name', 'users.id')->get();
         $employeedata = array();
         $emp_attendance = 1;

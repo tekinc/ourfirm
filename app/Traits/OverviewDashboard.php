@@ -12,6 +12,7 @@ use App\Models\Task;
 use App\Models\TaskboardColumn;
 use App\Models\Ticket;
 use App\Models\UserActivity;
+use App\Models\Currency;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -141,19 +142,31 @@ trait OverviewDashboard
                 DB::raw('YEAR(paid_on) year, MONTH(paid_on) month'),
                 DB::raw('amount as total'),
                 'currencies.id as currency_id',
-                'currencies.exchange_rate'
+                'currencies.exchange_rate',
+                'payments.exchange_rate',
+                'payments.default_currency_id'
             ]);
 
         $incomes = [];
 
         foreach ($payments as $invoice) {
 
+            if((is_null($invoice->default_currency_id) && is_null($invoice->exchange_rate)) ||
+            (!is_null($invoice->default_currency_id) && Company()->currency_id != $invoice->default_currency_id))
+            {
+                $currency = Currency::findOrFail($invoice->currency_id);
+                $exchangeRate = $currency->exchange_rate;
+            }
+            else {
+                $exchangeRate = $invoice->exchange_rate;
+            }
+
             if (!isset($incomes[$invoice->date])) {
                 $incomes[$invoice->date] = 0;
             }
 
-            if ($invoice->currency_id != $this->company->currency_id && $invoice->exchange_rate != 0) {
-                $incomes[$invoice->date] += floor((float)$invoice->total / (float)$invoice->exchange_rate);
+            if ($invoice->currency_id != $this->company->currency_id && $invoice->total > 0 && $exchangeRate > 0) {
+                $incomes[$invoice->date] += floatval($invoice->total) * floatval($exchangeRate);
             }
             else {
                 $incomes[$invoice->date] += round($invoice->total, 2);

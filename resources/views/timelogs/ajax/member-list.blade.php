@@ -14,10 +14,11 @@
                         </div>
 
                         <div class="col-md-3 text-center align-self-center border-left">
-
-                            <span class="f-w-500">
-                                {{ currency_format($item->earnings, company()->currency_id) }}
-                            </span> <span class="f-12 text-dark-grey ml-1"> @lang('app.earnings')</span>
+                            @if($viewTimelogEarningPermission == 'all')
+                                <span class="f-w-500">
+                                    {{ currency_format($item->earnings, company()->currency_id) }}
+                                </span> <span class="f-12 text-dark-grey ml-1"> @lang('app.earnings')</span>
+                            @endif
                         </div>
 
                         <div class="col-md-1 text-center align-self-center border-left">

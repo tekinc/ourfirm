@@ -37,9 +37,9 @@ class LeadCustomFormController extends AccountBaseController
      */
     public function update(Request $request, $id)
     {
-            LeadCustomForm::where('id', $id)->update([
-                'status' => $request->status
-            ]);
+        LeadCustomForm::where('id', $id)->update([
+            'status' => $request->status
+        ]);
 
         return Reply::success(__('messages.updateSuccess'));
     }
@@ -59,5 +59,4 @@ class LeadCustomFormController extends AccountBaseController
 
         return Reply::dataOnly([]);
     }
-
 }

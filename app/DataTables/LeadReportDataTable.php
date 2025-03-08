@@ -63,15 +63,23 @@ class LeadReportDataTable extends BaseDataTable
             ->select(
             'deals.id',
             'users.name as agent_name',
-            DB::raw("( select count('leadTotal.agent_id') from deals as leadTotal where leadTotal.agent_id = lead_agents.id) as count_total_leads"),
-            DB::raw("( select count('wonDeals.id') from deals as wonDeals INNER JOIN pipeline_stages on wonDeals.pipeline_stage_id = pipeline_stages.id where wonDeals.agent_id = lead_agents.id and pipeline_stages.slug = 'win')  as count_won_leads"),
-            DB::raw('( select sum(totalAmount.value) from deals as totalAmount where totalAmount.agent_id = lead_agents.id) as total_value'),
-            DB::raw("( select sum(convertedAmount.value) from deals as convertedAmount INNER JOIN pipeline_stages as stage on convertedAmount.pipeline_stage_id = stage.id where convertedAmount.agent_id = lead_agents.id and stage.slug = 'win')  as total_converted_value"),
-            DB::raw("( select count(lostDeals.id) from deals as lostDeals INNER JOIN pipeline_stages as stageLost on lostDeals.pipeline_stage_id = stageLost.id where lostDeals.agent_id = lead_agents.id  and stageLost.slug = 'lost')  as total_lost_deals"),
-            DB::raw('( select count("total_followup.deal_id") from lead_follow_up as total_followup INNER JOIN deals as lead_totals ON lead_totals.id=total_followup.deal_id where total_followup.deal_id = lead_totals.id and lead_totals.agent_id = lead_agents.id) as count_total_follow_up'),
-            DB::raw("( select count('total_pending_followup.id') from lead_follow_up as total_pending_followup INNER JOIN deals as lead_status_totals ON lead_status_totals.id=total_pending_followup.deal_id where total_pending_followup.deal_id = lead_status_totals.id and lead_status_totals.agent_id = lead_agents.id and total_pending_followup.status = 'pending') as count_total_pending_follow_up"),
+            // DB::raw("( select count('leadTotal.agent_id') from deals as leadTotal where leadTotal.agent_id = lead_agents.id) as count_total_leads"),
+            // DB::raw("( select count('wonDeals.id') from deals as wonDeals INNER JOIN pipeline_stages on wonDeals.pipeline_stage_id = pipeline_stages.id where wonDeals.agent_id = lead_agents.id and pipeline_stages.slug = 'win')  as count_won_leads"),
+            // DB::raw('( select sum(totalAmount.value) from deals as totalAmount where totalAmount.agent_id = lead_agents.id) as total_value'),
+            // DB::raw("( select sum(convertedAmount.value) from deals as convertedAmount INNER JOIN pipeline_stages as stage on convertedAmount.pipeline_stage_id = stage.id where convertedAmount.agent_id = lead_agents.id and stage.slug = 'win')  as total_converted_value"),
+            // DB::raw("( select count(lostDeals.id) from deals as lostDeals INNER JOIN pipeline_stages as stageLost on lostDeals.pipeline_stage_id = stageLost.id where lostDeals.agent_id = lead_agents.id  and stageLost.slug = 'lost')  as total_lost_deals"),
+            // DB::raw('( select count("total_followup.deal_id") from lead_follow_up as total_followup INNER JOIN deals as lead_totals ON lead_totals.id=total_followup.deal_id where total_followup.deal_id = lead_totals.id and lead_totals.agent_id = lead_agents.id) as count_total_follow_up'),
+            // DB::raw("( select count('total_pending_followup.id') from lead_follow_up as total_pending_followup INNER JOIN deals as lead_status_totals ON lead_status_totals.id=total_pending_followup.deal_id where total_pending_followup.deal_id = lead_status_totals.id and lead_status_totals.agent_id = lead_agents.id and total_pending_followup.status = 'pending') as count_total_pending_follow_up"),
+            DB::raw("COUNT(DISTINCT deals.id) as count_total_leads"),
+            DB::raw("COUNT(DISTINCT CASE WHEN pipeline_stages.slug = 'win' THEN deals.id END) as count_won_leads"),
+            DB::raw("SUM(deals.value) as total_value"),
+            DB::raw("SUM(CASE WHEN pipeline_stages.slug = 'win' THEN deals.value ELSE 0 END) as total_converted_value"),
+            DB::raw("COUNT(DISTINCT CASE WHEN pipeline_stages.slug = 'lost' THEN deals.id END) as total_lost_deals"),
+            DB::raw("COUNT(DISTINCT lead_follow_up.id) as count_total_follow_up"),
+            DB::raw("COUNT(DISTINCT CASE WHEN lead_follow_up.status = 'pending' THEN lead_follow_up.id END) as count_total_pending_follow_up")
         )
             ->leftJoin('deals', 'deals.agent_id', 'lead_agents.id')
+            ->leftJoin('pipeline_stages', 'deals.pipeline_stage_id', 'pipeline_stages.id')
             ->join('users', 'users.id', 'lead_agents.user_id')
             ->leftjoin('lead_follow_up', 'lead_follow_up.deal_id', 'deals.id');
 
@@ -79,7 +87,7 @@ class LeadReportDataTable extends BaseDataTable
             $startDate = companyToDateString($request->startDate);
 
             if (!is_null($startDate)) {
-                $model = $model->where(DB::raw('DATE(deals.`created_at`)'), '>=', $startDate);
+                $model = $model->where(DB::raw('DATE(deals.`close_date`)'), '>=', $startDate);
             }
         }
 
@@ -88,11 +96,11 @@ class LeadReportDataTable extends BaseDataTable
 
             if (!is_null($endDate)) {
                 $model = $model->where(function ($query) use ($endDate) {
-                    $query->where(DB::raw('DATE(deals.`created_at`)'), '<=', $endDate);
+                    $query->where(DB::raw('DATE(deals.`close_date`)'), '<=', $endDate);
                 });
             }
         }
-     
+
 
         if (!is_null($agent) && $agent !== 'all') {
             $model->where('users.id', $agent);

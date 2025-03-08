@@ -24,11 +24,8 @@ $addTimelogPermission = user()->permission('add_timelogs');
                         <x-forms.label :fieldLabel="__('app.employee')" fieldId="employee" />
                             <select class="form-control select-picker" name="employee" id="employee" data-live-search="true"
                                     data-size="8">
-                                @if ($employees->count() > 1 || in_array('admin', user_roles()))
-                                    <option value="all">@lang('app.all')</option>
-                                @endif
-                                @foreach ($employees as $employee)
-                                        <x-user-option :user="$employee" :selected="request('assignee') == 'me' && $employee->id == user()->id"/>
+                                @foreach ($project->projectMembers as $employee)
+                                    <x-user-option :user="$employee"></x-user-option>
                                 @endforeach
                             </select>
                     </div>

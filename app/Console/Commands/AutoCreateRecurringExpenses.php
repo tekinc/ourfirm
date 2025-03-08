@@ -114,9 +114,11 @@ class AutoCreateRecurringExpenses extends Command
             'annually' => now()->addYear(),
             default => now()->addDay(),
         };
+
         $totalExistingCount = $recurring->expense_count + 1;
 
         $days = ($totalExistingCount === $recurring->billing_cycle) ? null : $days->setTimezone($recurring->timezone)->format('Y-m-d');
+
         ExpenseRecurring::where('id', $recurring->rid)->update(['next_expense_date' => $days]);
     }
 

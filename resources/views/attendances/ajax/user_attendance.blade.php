@@ -89,7 +89,9 @@
                 </div>
             </td>
             <td>
-                @if (!$dateData['holiday'] && !$dateData['leave'])
+                @if (isset($dateData['day_off']) && ($dateData['day_off'] == true))
+                    <label class="badge badge-info">@lang('modules.attendance.dayOff')</label>
+                @elseif (!$dateData['holiday'] && !$dateData['leave'])
                     <label class="badge badge-danger">@lang('modules.attendance.absent')</label>
                 @elseif($dateData['leave'])
                     @if ($dateData['leave']['duration'] == 'half day')

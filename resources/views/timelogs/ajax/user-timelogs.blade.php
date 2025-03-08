@@ -1,6 +1,7 @@
 @php
 $editTimelogPermission = user()->permission('edit_timelogs');
 $deleteTimelogPermission = user()->permission('delete_timelogs');
+$viewTimelogEarningPermission = user()->permission('view_timelog_earnings');
 @endphp
 <div class="row user-timelogs mt-3">
     <div class="col-md-12">
@@ -9,7 +10,9 @@ $deleteTimelogPermission = user()->permission('delete_timelogs');
                 <th>@lang('app.task')</th>
                 <th>@lang('app.time')</th>
                 <th>@lang('modules.timeLogs.totalHours')</th>
-                <th>@lang('app.earnings')</th>
+                @if($viewTimelogEarningPermission == 'all')
+                    <th>@lang('app.earnings')</th>
+                @endif
                 <th class="text-right">@lang('app.action')</th>
             </x-slot>
 
@@ -36,13 +39,15 @@ $deleteTimelogPermission = user()->permission('delete_timelogs');
                     <td>
                         {{ $item->hours }}
                     </td>
-                    <td>
-                        {{ currency_format($item->earnings, company()->currency_id) }}
-                        @if ($item->approved)
-                            <i data-toggle="tooltip" data-original-title="{{ __('app.approved') }}"
-                                class="fa fa-check-circle text-primary"></i>
-                        @endif
-                    </td>
+                    @if($viewTimelogEarningPermission == 'all')
+                        <td>
+                            {{ currency_format($item->earnings, company()->currency_id) }}
+                            @if ($item->approved)
+                                <i data-toggle="tooltip" data-original-title="{{ __('app.approved') }}"
+                                    class="fa fa-check-circle text-primary"></i>
+                            @endif
+                        </td>
+                    @endif
                     <td class="text-right">
                         <div class="task_view">
                             <a href="{{ route('timelogs.show', $item->id) }}"

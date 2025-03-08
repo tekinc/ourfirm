@@ -765,7 +765,6 @@ class ProjectController extends AccountBaseController
             $this->view = 'projects.ajax.files';
             break;
         case 'timelogs':
-            $this->employees = User::allEmployees();
             return $this->timelogs($this->project->project_admin == user()->id);
         case 'expenses':
             return $this->expenses();

@@ -68,6 +68,7 @@
 @php
 $addEstimatePermission = user()->permission('add_estimates');
 $addEstimateRequestPermission = user()->permission('add_estimate_request');
+$viewEstimatePermission = user()->permission('view_estimates');
 @endphp
 
 @section('content')
@@ -87,6 +88,14 @@ $addEstimateRequestPermission = user()->permission('add_estimate_request');
                             @lang('modules.estimateRequest.sendEstimateRequest')
                         </x-forms.link-secondary>
                     @endif
+                @endif
+            </div>
+
+            <div class="btn-group mt-2 mt-lg-0 mt-md-0 ml-0 ml-lg-3 ml-md-3" role="group">
+                @if (in_array($viewEstimatePermission, ['all', 'added', 'owned', 'both']))
+                    <a href="{{ route('estimates.index') }}" class=" btn btn-secondary f-14"
+                    data-toggle="tooltip" data-original-title="@lang('modules.module.estimates')">
+                    <i class="side-icon fa fa-file-invoice-dollar"></i></a>
                 @endif
             </div>
 

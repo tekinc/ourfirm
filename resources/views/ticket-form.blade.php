@@ -174,7 +174,7 @@
                                     <x-forms.number
                                         fieldId="custom_fields_data[{{ $item->field_name . '_' . $item->customField->id }}]"
                                         :fieldLabel="$item->field_display_name"
-                                        fieldName="custom_fields_data[{{ $item->name . '_' . $item->id }}]"
+                                        fieldName="custom_fields_data[{{ $item->field_name . '_' . $item->customField->id }}]"
                                         :fieldPlaceholder="$item->label"
                                         :fieldRequired="($item->required === 1) ? true : false">
                                     </x-forms.number>
@@ -296,7 +296,7 @@
         </x-form>
 
         <div class="row">
-            <div class="col-sm-12">
+            <div class="col-sm-12" style="margin-top:15px">
                 <div class="alert alert-success" id="success-message" style="display:none"></div>
             </div>
         </div>

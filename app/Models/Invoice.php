@@ -247,8 +247,12 @@ class Invoice extends BaseModel
             ->get();
     }
 
-    public static function lastInvoiceNumber()
+    public static function lastInvoiceNumber($companyId = null)
     {
+        if ($companyId) {
+            return (int)Invoice::where('company_id', $companyId)->orderBy('id', 'desc')->first()?->original_invoice_number ?? 0;
+        }
+
         return (int)Invoice::orderBy('id', 'desc')->first()?->original_invoice_number ?? 0;
     }
 
@@ -291,7 +295,6 @@ class Invoice extends BaseModel
         }
 
         return Carbon::parse($this->issue_date)->format('d F, Y');
-
     }
 
     public function formatInvoiceNumber()
@@ -309,5 +312,4 @@ class Invoice extends BaseModel
     {
         return $this->hasMany(InvoiceFiles::class, 'invoice_id')->orderByDesc('id');
     }
-
 }

@@ -109,7 +109,8 @@ class WeeklyTimesheetController extends AccountBaseController
                       });
                 });
             })
-            ->select('tasks.id', 'tasks.heading')
+            ->with('project:id,project_name')
+            ->select('tasks.id', 'tasks.heading', 'tasks.project_id')
             ->get();
 
         $this->tasksForWeek = $tasks;
@@ -272,7 +273,8 @@ class WeeklyTimesheetController extends AccountBaseController
             return $query->whereBetween(DB::raw('DATE(tasks.`start_date`)'), [$this->weekStartDate, $this->weekEndDate])
             ->orWhereBetween(DB::raw('DATE(tasks.`due_date`)'), [$this->weekStartDate, $this->weekEndDate]);
         })
-        ->select('tasks.id', 'tasks.heading')->get();
+        ->with('project:id,project_name')
+        ->select('tasks.id', 'tasks.heading', 'tasks.project_id')->get();
 
         $this->tasksForWeek = $tasks;
         $this->weekDates = $weekDates;

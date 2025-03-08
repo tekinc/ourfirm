@@ -636,11 +636,18 @@ class EmployeeShiftScheduleController extends AccountBaseController
                 //     continue;
                 // }
 
-                if($officeOpenDays) {
-                    if (!in_array($date->dayOfWeek, $officeOpenDays)) {
-                        $invalidShiftDays = true;
-                        continue;
-                    }
+                // if($officeOpenDays) {
+                //     if (!in_array($date->dayOfWeek, $officeOpenDays)) {
+                //         $invalidShiftDays = true;
+                //         continue;
+                //     }
+                // }
+
+                if ($officeOpenDays && !in_array($date->dayOfWeek, $officeOpenDays)) {
+
+                    $dayOffShiftId = EmployeeShift::where('shift_name', 'Day Off')->where('company_id', company()->id)->first();
+                    $this->bulkData($request, $date, $userData, $userId, $insertData, $officeOpenDays, $dayOffShiftId->id);
+                    continue;
                 }
 
                 if ($request->assign_shift_by != 'date') {
@@ -676,20 +683,19 @@ class EmployeeShiftScheduleController extends AccountBaseController
         return Reply::redirect($redirectUrl, __('messages.employeeShiftAdded'));
     }
 
-    public function bulkData($request, $date, $userData, $userId, &$insertData, $officeOpenDays)
+    public function bulkData($request, $date, $userData, $userId, &$insertData, $officeOpenDays, $overrideShiftId = null)
     {
         // Ensure $date is an instance of Carbon
         if (!$date instanceof Carbon) {
             $date = Carbon::parse($date);
         }
-
-        if ($date->greaterThanOrEqualTo($userData->employeeDetail->joining_date) && (is_null($officeOpenDays) || (is_array($officeOpenDays) && in_array($date->dayOfWeek, $officeOpenDays)))) {
+        if ($date->greaterThanOrEqualTo($userData->employeeDetail->joining_date) && (is_null($officeOpenDays) || (is_array($officeOpenDays)))) {
             $insertData += 1;
 
             $shift = EmployeeShiftSchedule::where('user_id', $userId)->where('date', $date->format('Y-m-d'))->first() ?? new EmployeeShiftSchedule();
             $shift->user_id = $userId;
             $shift->date = $date->copy()->format('Y-m-d');
-            $shift->employee_shift_id = $request->shift;
+            $shift->employee_shift_id = $overrideShiftId ?? $request->shift;
             $shift->added_by = user()->id;
             $shift->last_updated_by = user()->id;
             $shift->remarks = $request->remarks;

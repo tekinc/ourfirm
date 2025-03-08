@@ -294,7 +294,7 @@
                 </div>
                 <br><br>
                 <input type="hidden" name="company_id" value="{{ $company->id }}">
-                <input type="hidden" name="category_id" value="{{ $category->id }}">
+                <input type="hidden" name="category_id" value="{{ $category?->id }}">
                 <div class="form-actions">
                     <button type="button" id="save-form" class="btn btn-primary"><i
                             class="fa fa-check"></i> @lang('app.save')</button>

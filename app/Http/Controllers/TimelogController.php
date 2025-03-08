@@ -369,6 +369,7 @@ class TimelogController extends AccountBaseController
     {
         $this->pageTitle = __('app.menu.timeLogs');
         $this->editTimelogPermission = user()->permission('edit_timelogs');
+        $this->viewTimelogEarningPermission = user()->permission('view_timelog_earnings');
         $this->timeLog = ProjectTimeLog::with('user', 'user.employeeDetail', 'project', 'task', 'breaks', 'activeBreak')->findOrFail($id)->withCustomFields();
 
         abort_403(!(
@@ -652,6 +653,7 @@ class TimelogController extends AccountBaseController
         $employee = $request->employee;
         $projectId = $request->projectID;
         $this->viewTimelogPermission = user()->permission('view_timelogs');
+        $this->viewTimelogEarningPermission = user()->permission('view_timelog_earnings');
 
         $query = User::with('employeeDetail.designation:id,name')
             ->join('employee_details', 'users.id', '=', 'employee_details.user_id')

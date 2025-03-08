@@ -47,8 +47,11 @@ class TimelogReportController extends AccountBaseController
         $approved = $request->approved;
         $invoice = $request->invoice;
 
-        $startDate = now($this->company->timezone)->startOfMonth()->toDateString();
-        $endDate = now($this->company->timezone)->toDateString();
+        $earliestLog = ProjectTimeLog::orderBy('start_time', 'asc')->first();
+        $latestLog = ProjectTimeLog::orderBy('end_time', 'desc')->first();
+
+        $startDate = $earliestLog ? $earliestLog->start_time->toDateString() : now($this->company->timezone)->startOfMonth()->toDateString();
+        $endDate = $latestLog ? $latestLog->end_time->toDateString() : now($this->company->timezone)->toDateString();
 
         if ($request->startDate !== null && $request->startDate != 'null' && $request->startDate != '') {
             $startDate = companyToDateString($request->startDate);
@@ -106,17 +109,29 @@ class TimelogReportController extends AccountBaseController
         }
 
         $timelogg = $timelogs
-            ->groupBy('date')
-            ->orderBy('start_time', 'ASC')
-            ->get([
+        ->groupBy(DB::raw('DATE(project_time_logs.start_time)'))
+        ->orderBy('start_time', 'ASC')
+        ->get([
             DB::raw('DATE_FORMAT(start_time,\'%d-%M-%y\') as date'),
-            DB::raw('FLOOR(sum(total_minutes)) as total_hours'),
+            DB::raw('FLOOR(SUM(total_minutes)) as total_minutes'),
         ]);
 
-        $totalHours = $timelogg->pluck('total_hours')->first();
+        $breaks = ProjectTimeLog::with('breaks')
+            ->whereDate('project_time_logs.start_time', '>=', $startDate)
+            ->whereDate('project_time_logs.end_time', '<=', $endDate)
+            ->get()
+            ->groupBy(fn ($log) => $log->start_time->format('d-F-y'))
+            ->map(function ($logs) {
+                return $logs->sum(fn ($log) => $log->breaks->sum('total_minutes'));
+            });
 
         $values = [];
-        $values[] = round((($totalHours - $total_break_hours) / 60), 2);
+
+        foreach ($timelogg as $log) {
+            $breakMinutes = $breaks[$log->date] ?? 0;
+            $loggedHours = $log->total_minutes - $breakMinutes;
+            $values[] = $loggedHours;
+        }
 
         $data['labels'] = $timelogg->pluck('date')->toArray();
         $data['values'] = $values;

@@ -324,7 +324,7 @@ class LeadReportController extends AccountBaseController
         )->where(DB::raw('YEAR(close_date)'), $selectedYear)
             ->where('lead_pipeline_id', $pipelineId)
             ->when($categoryId, function ($query) use ($categoryId) {
-                return $query->where('deals.category_id', $categoryId); 
+                return $query->where('deals.category_id', $categoryId);
             })
             ->whereNotNull('close_date')
             ->groupBy(DB::raw('MONTH(close_date)'))
@@ -359,7 +359,7 @@ class LeadReportController extends AccountBaseController
         }
     }
 
-    
+
     public function exportDealReport($year, $pipelineId, $categoryId = null)
     {
         $pipeline = LeadPipeline::find($pipelineId);

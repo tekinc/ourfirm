@@ -29,7 +29,7 @@
             text-align: center;
         }
 
-        .employee-td select {
+        .employee-td .bootstrap-select {
             width: 240px !important;
         }
 
@@ -190,7 +190,7 @@
                     $('#attendance-data').html(response.data);
                     $('#attendance-data #change-year').selectpicker("refresh");
                     $('#attendance-data #change-month').selectpicker("refresh");
-
+                    $('#attendance-data .select-picker').selectpicker('refresh');
                 }
             });
 

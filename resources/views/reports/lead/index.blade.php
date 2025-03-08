@@ -69,6 +69,11 @@
 
 @section('content')
     <div class="content-wrapper border-top-0 client-detail-wrapper">
+
+        <x-alert type="info" icon="info-circle">
+            @lang('messages.dealCloseDateMsg')
+        </x-alert>
+
         @include($view)
     </div>
 @endsection

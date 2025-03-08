@@ -24,10 +24,10 @@ class SubmitWeeklyTimesheetListener
      */
     public function handle(SubmitWeeklyTimesheet $event): void
     {
-        $admins = User::allAdmins();
+        // $admins = User::allAdmins();
         $reportingManager = $event->weeklyTimesheet->user->employeeDetails->reportingTo;
 
-        Notification::send($admins, new NewTimesheetApproval($event->weeklyTimesheet));
+        // Notification::send($admins, new NewTimesheetApproval($event->weeklyTimesheet));
 
         if ($reportingManager) {
             $reportingManager->notify(new NewTimesheetApproval($event->weeklyTimesheet));

@@ -802,6 +802,17 @@ class AttendanceController extends AccountBaseController
             }
         }
 
+        $shiftSchedules = EmployeeShiftSchedule::with('shift')
+            ->select(DB::raw('DATE_FORMAT(date, "%Y-%m-%d") as day_off_date'))
+            ->where('user_id', $userId)
+            ->whereBetween('date', [$startDate, $endDate])
+            ->whereHas('shift', function ($query) {
+                $query->where('shift_name', 'Day Off');
+            })
+            ->get();
+        $dayOffData = $shiftSchedules->keyBy('day_off_date');
+        $dayOffArray = $dayOffData->toArray();
+
         // Set All Data in a single Array
         // @codingStandardsIgnoreStart
 
@@ -814,8 +825,14 @@ class AttendanceController extends AccountBaseController
                 $dateWiseData[$date->toDateString()] = [
                     'holiday' => false,
                     'attendance' => false,
-                    'leave' => false
+                    'leave' => false,
+                    'day_off' => false
                 ];
+
+                // Set Day Off Data
+                if (array_key_exists($date->toDateString(), $dayOffArray)) {
+                    $dateWiseData[$date->toDateString()]['day_off'] = $dayOffData[$date->toDateString()];
+                }
 
                 // Set Holiday Data
                 if (array_key_exists($date->toDateString(), $holidayArray)) {
@@ -841,8 +858,14 @@ class AttendanceController extends AccountBaseController
             $dateWiseData[$startDate->toDateString()] = [
                 'holiday' => false,
                 'attendance' => false,
-                'leave' => false
+                'leave' => false,
+                'day_off' => false
             ];
+
+            // Set Day Off Data
+            if (array_key_exists($date->toDateString(), $dayOffArray)) {
+                $dateWiseData[$date->toDateString()]['day_off'] = $dayOffData[$date->toDateString()];
+            }
 
             // Set Holiday Data
             if (array_key_exists($startDate->toDateString(), $holidayArray)) {

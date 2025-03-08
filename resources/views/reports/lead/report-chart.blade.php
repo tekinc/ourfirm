@@ -68,6 +68,11 @@
 
 @section('content')
     <div class="content-wrapper">
+
+        <x-alert type="info" icon="info-circle">
+            @lang('messages.dealCloseDateMsg')
+        </x-alert>
+
         <div class="d-flex flex-column w-tables rounded mt-4 bg-white">
             <div id="chartContainer"></div>
         </div>
@@ -242,7 +247,7 @@
                 showTable();
             });
 
-           
+
         });
 
         @if (canDataTableExport())

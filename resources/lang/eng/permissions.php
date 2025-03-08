@@ -430,6 +430,7 @@ return array (
     'view_increment_promotion' => 'View Increment & Promotion',
     'manage_increment_promotion' => 'Manage Increment & Promotion',
     'manage_performance_setting' => 'Manage Performance Setting',
+    'view_performance_module' => 'View Performance Module',
     'manage_biometric_settings' => 'Manage Biometric Settings',
 
     'manage_billing' => 'Manage Billing',

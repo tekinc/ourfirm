@@ -233,12 +233,19 @@ class RecurringInvoiceController extends AccountBaseController
      */
     public function show($id)
     {
+
         $this->invoice = RecurringInvoice::with('recurrings', 'units', 'items.recurringInvoiceItemImage')->findOrFail($id);
 
-        $this->inv = Invoice::where('invoice_recurring_id', $id)->first()->withCustomFields();
-        $getCustomFieldGroupsWithFields = $this->inv->getCustomFieldGroupsWithFields();
-        if ($getCustomFieldGroupsWithFields) {
-            $this->fields = $getCustomFieldGroupsWithFields->fields;
+        $this->inv = Invoice::where('invoice_recurring_id', $id)->first();
+
+        if($this->inv)
+        {
+            $this->inv = $this->inv->withCustomFields();
+            $getCustomFieldGroupsWithFields = $this->inv->getCustomFieldGroupsWithFields();
+
+            if ($getCustomFieldGroupsWithFields) {
+                $this->fields = $getCustomFieldGroupsWithFields->fields;
+            }
         }
 
         if ($this->invoice->discount > 0) {
@@ -330,10 +337,16 @@ class RecurringInvoiceController extends AccountBaseController
         $this->linkInvoicePermission = user()->permission('link_invoice_bank_account');
         $this->viewBankAccountPermission = user()->permission('view_bankaccount');
 
-        $this->inv = Invoice::where('invoice_recurring_id', $id)->first()->withCustomFields();
-        $getCustomFieldGroupsWithFields = $this->inv->getCustomFieldGroupsWithFields();
-        if ($getCustomFieldGroupsWithFields) {
-            $this->fields = $getCustomFieldGroupsWithFields->fields;
+        $this->inv = Invoice::where('invoice_recurring_id', $id)->first();
+        
+        if($this->inv)
+        {
+            $this->inv = $this->inv->withCustomFields();
+            $getCustomFieldGroupsWithFields = $this->inv->getCustomFieldGroupsWithFields();
+
+            if ($getCustomFieldGroupsWithFields) {
+                $this->fields = $getCustomFieldGroupsWithFields->fields;
+            }
         }
 
         $bankAccounts = BankAccount::where('status', 1)->where('currency_id', $this->invoice->currency_id);
@@ -515,9 +528,15 @@ class RecurringInvoiceController extends AccountBaseController
             $invoice->save();
         }
 
-        $inv = Invoice::where('invoice_recurring_id', $id)->first()->withCustomFields();
-        if ($request->custom_fields_data) {
-            $inv->updateCustomFieldData($request->custom_fields_data);
+        $inv = Invoice::where('invoice_recurring_id', $id)->first();
+
+        if($this->inv)
+        {
+            $this->inv = $this->inv->withCustomFields();
+
+            if ($request->custom_fields_data) {
+                $inv->updateCustomFieldData($request->custom_fields_data);
+            }
         }
 
         return Reply::redirect(route('recurring-invoices.index'), __('messages.recordSaved'));

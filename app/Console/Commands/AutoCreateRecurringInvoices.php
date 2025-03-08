@@ -74,9 +74,9 @@ class AutoCreateRecurringInvoices extends Command
                 if ($recurring->next_invoice_date->timezone($company->timezone)->isPast() || $recurring->next_invoice_date->timezone($company->timezone)->isToday()) {
                     $numIterations = $recurring->next_invoice_date->timezone($company->timezone)->diffInDays(now()) + 1;
 
-                    for($i = 0; $i < $numIterations; $i++){
+                    for ($i = 0; $i < $numIterations; $i++) {
 
-                        if($totalExistingCount >= $recurring->billing_cycle){
+                        if ($totalExistingCount >= $recurring->billing_cycle) {
                             break;
                         }
 
@@ -136,7 +136,7 @@ class AutoCreateRecurringInvoices extends Command
         $invoice->company_id = $recurring->company_id;
         $invoice->project_id = $recurring->project_id ?? null;
         $invoice->client_id = $recurring->client_id ?: null;
-        $invoice->invoice_number = Invoice::lastInvoiceNumber() + 1;
+        $invoice->invoice_number = Invoice::lastInvoiceNumber($recurring->company_id) + 1;
         $invoice->issue_date = $invoiceDate->format('Y-m-d');
         $invoice->due_date = $dueDate;
         $invoice->sub_total = round($recurring->sub_total, 2);
@@ -160,13 +160,11 @@ class AutoCreateRecurringInvoices extends Command
                 $client = $invoice->project->clientdetails;
                 $client->shipping_address = $invoice->project->client->clientDetails->shipping_address;
                 $client->save();
-            }
-            elseif ($invoice->client_id != null && $invoice->client_id != '') {
+            } elseif ($invoice->client_id != null && $invoice->client_id != '') {
                 $client = $invoice->clientdetails;
                 $client->shipping_address = $invoice->client->clientDetails->shipping_address;
                 $client->save();
             }
-
         }
 
         foreach ($recurring->items as $item) {
@@ -215,7 +213,6 @@ class AutoCreateRecurringInvoices extends Command
                     copy($source, $path . $filename);
                 }
             }
-
         }
 
 
@@ -232,5 +229,4 @@ class AutoCreateRecurringInvoices extends Command
         // Log search
         $this->logSearchEntry($invoice->id, $invoice->invoice_number, 'invoices.show', 'invoice');
     }
-
 }

@@ -178,11 +178,19 @@ class RecurringExpenseController extends AccountBaseController
     {
         $this->expense = ExpenseRecurring::with('recurrings')->findOrFail($id);
 
-        $this->exp = Expense::where('expenses_recurring_id', $id)->first()->withCustomFields();
-        $getCustomFieldGroupsWithFields = $this->exp->getCustomFieldGroupsWithFields();
-        if ($getCustomFieldGroupsWithFields) {
-            $this->fields = $getCustomFieldGroupsWithFields->fields;
+        $this->exp = Expense::where('expenses_recurring_id', $id)->first();
+
+        if($this->exp)
+        {
+            $this->exp = $this->exp->withCustomFields();
+
+            $getCustomFieldGroupsWithFields = $this->exp->getCustomFieldGroupsWithFields();
+
+            if ($getCustomFieldGroupsWithFields) {
+                $this->fields = $getCustomFieldGroupsWithFields->fields;
+            }
         }
+
 
         $this->daysOfWeek = [
             '1' => 'sunday',
@@ -234,10 +242,16 @@ class RecurringExpenseController extends AccountBaseController
         $this->linkExpensePermission = user()->permission('link_expense_bank_account');
         $this->viewBankAccountPermission = user()->permission('view_bankaccount');
 
-        $this->exp = Expense::where('expenses_recurring_id', $id)->first()->withCustomFields();
-        $getCustomFieldGroupsWithFields = $this->exp->getCustomFieldGroupsWithFields();
-        if ($getCustomFieldGroupsWithFields) {
-            $this->fields = $getCustomFieldGroupsWithFields->fields;
+        $this->exp = Expense::where('expenses_recurring_id', $id)->first();
+
+        if($this->exp)
+        {
+            $this->exp = $this->exp->withCustomFields();
+            $getCustomFieldGroupsWithFields = $this->exp->getCustomFieldGroupsWithFields();
+
+            if ($getCustomFieldGroupsWithFields) {
+                $this->fields = $getCustomFieldGroupsWithFields->fields;
+            }
         }
 
         $bankAccounts = BankAccount::where('status', 1)->where('currency_id', $this->expense->currency_id);
@@ -326,9 +340,15 @@ class RecurringExpenseController extends AccountBaseController
             $expense->save();
         }
 
-        $exp = Expense::where('expenses_recurring_id', $id)->first()->withCustomFields();
-        if ($request->custom_fields_data) {
-            $exp->updateCustomFieldData($request->custom_fields_data);
+        $exp = Expense::where('expenses_recurring_id', $id)->first();
+
+        if($this->exp)
+        {
+            $this->exp = $this->exp->withCustomFields();
+
+            if ($request->custom_fields_data) {
+                $exp->updateCustomFieldData($request->custom_fields_data);
+            }
         }
 
         $redirectUrl = urldecode($request->redirect_url);

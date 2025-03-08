@@ -113,8 +113,7 @@ class HomeController extends Controller
         if ($this->invoice->discount > 0) {
             if ($this->invoice->discount_type == 'percent') {
                 $this->discount = (($this->invoice->discount / 100) * $this->invoice->sub_total);
-            }
-            else {
+            } else {
                 $this->discount = $this->invoice->discount;
             }
         }
@@ -135,8 +134,7 @@ class HomeController extends Controller
 
                     if (!isset($taxList[$taxName])) {
                         $taxList[$taxName] = $taxAmount;
-                    }
-                    else {
+                    } else {
                         $taxList[$taxName] += $taxAmount;
                     }
                 }
@@ -249,8 +247,7 @@ class HomeController extends Controller
 
         if (!is_null($this->invoice->client_id)) {
             $client = $this->invoice->client;
-        }
-        else if (!is_null($this->invoice->project_id) && !is_null($this->invoice->project->client_id)) {
+        } else if (!is_null($this->invoice->project_id) && !is_null($this->invoice->project->client_id)) {
             $client = $this->invoice->project->client;
         }
 
@@ -338,12 +335,10 @@ class HomeController extends Controller
         if ($this->invoice->discount > 0) {
             if ($this->invoice->discount_type == 'percent') {
                 $this->discount = (($this->invoice->discount / 100) * $this->invoice->sub_total);
-            }
-            else {
+            } else {
                 $this->discount = $this->invoice->discount;
             }
-        }
-        else {
+        } else {
             $this->discount = 0;
         }
 
@@ -363,19 +358,13 @@ class HomeController extends Controller
 
                         if ($this->invoice->calculate_tax == 'after_discount' && $this->discount > 0) {
                             $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] = ($item->amount - ($item->amount / $this->invoice->sub_total) * $this->discount) * ($this->tax->rate_percent / 100);
-
-                        }
-                        else {
+                        } else {
                             $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] = $item->amount * ($this->tax->rate_percent / 100);
                         }
-
-                    }
-                    else {
+                    } else {
                         if ($this->invoice->calculate_tax == 'after_discount' && $this->discount > 0) {
                             $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] = $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] + (($item->amount - ($item->amount / $this->invoice->sub_total) * $this->discount) * ($this->tax->rate_percent / 100));
-
-                        }
-                        else {
+                        } else {
                             $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] = $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] + ($item->amount * ($this->tax->rate_percent / 100));
                         }
                     }
@@ -435,8 +424,7 @@ class HomeController extends Controller
 
         if ($assignedTo != 'all') {
             $tasks = Task::projectTasks($ganttProjectId, $assignedTo, 1);
-        }
-        else {
+        } else {
             $tasks = Task::projectTasks($ganttProjectId, null, 1);
         }
 
@@ -531,7 +519,6 @@ class HomeController extends Controller
 
 
         return view('front.tasks.show', $this->data);
-
     }
 
     public function taskFiles($id)
@@ -571,7 +558,6 @@ class HomeController extends Controller
                 $q->where('tasks.is_private', 0);
                 $q->where('tasks.project_id', '=', $project->id);
                 $q->select(DB::raw('count(distinct tasks.id)'));
-
             }])
                 ->with(['tasks' => function ($q) use ($project) {
                     $q->withCount(['subtasks', 'completedSubtasks', 'comments'])
@@ -586,7 +572,6 @@ class HomeController extends Controller
                     $q->whereNull('projects.deleted_at');
                     $q->where('tasks.is_private', 0);
                     $q->where('tasks.project_id', '=', $project->id);
-
                 }])
                 ->where('taskboard_columns.company_id', $this->company->id)
                 ->where('taskboard_columns.column_name', '<>', 'Waiting Approval')
@@ -666,8 +651,7 @@ class HomeController extends Controller
 
         if ($totalTasks <= ($skip + $this->company->taskboard_length)) {
             $loadStatus = 'hide';
-        }
-        else {
+        } else {
             $loadStatus = 'show';
         }
 
@@ -684,7 +668,7 @@ class HomeController extends Controller
     public function leadForm($id)
     {
 
-        if(session()->has('is_deal')) {
+        if (session()->has('is_deal')) {
             session()->forget('is_deal');
         }
 
@@ -770,7 +754,7 @@ class HomeController extends Controller
         $lead->note = (request()->has('message') ? $request->message : null);
         $lead->value = 0;
         $lead->currency_id = $company->currency_id;
-        $lead->category_id = $request->category_id;
+        $lead->category_id = $request->category_id ?? null;
         Session::put('is_deal', true);
         $lead->save();
 
@@ -944,16 +928,11 @@ class HomeController extends Controller
 
         if (!in_array('RestAPI', array_keys($plugins))) {
             $message = 'Rest API module is not activated';
-        }
-        elseif (!Module::has('RestAPI')) {
+        } elseif (!Module::has('RestAPI')) {
             $message = 'Rest API module is not installed';
-
-        }
-        elseif (((int)str_replace('.', '', $enableModules['RestAPI'])) < 110) {
+        } elseif (((int)str_replace('.', '', $enableModules['RestAPI'])) < 110) {
             $message = 'Please update Rest API module greater then 1.1.0 version';
-        }
-
-        elseif (((int)str_replace('.', '', $enableModules['worksuite'])) < 400) {
+        } elseif (((int)str_replace('.', '', $enableModules['worksuite'])) < 400) {
             $message = 'Please update' . config('app.name') . ' greater then 4.0.0 version';
         }
 
@@ -975,8 +954,7 @@ class HomeController extends Controller
         if ($this->proposal->discount > 0) {
             if ($this->proposal->discount_type == 'percent') {
                 $this->discount = (($this->proposal->discount / 100) * $this->proposal->sub_total);
-            }
-            else {
+            } else {
                 $this->discount = $this->proposal->discount;
             }
         }
@@ -1001,19 +979,13 @@ class HomeController extends Controller
 
                         if ($this->proposal->calculate_tax == 'after_discount' && $this->discount > 0) {
                             $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] = ($item->amount - ($item->amount / $this->proposal->sub_total) * $this->discount) * ($this->tax->rate_percent / 100);
-
-                        }
-                        else {
+                        } else {
                             $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] = $item->amount * ($this->tax->rate_percent / 100);
                         }
-
-                    }
-                    else {
+                    } else {
                         if ($this->proposal->calculate_tax == 'after_discount' && $this->discount > 0) {
                             $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] = $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] + (($item->amount - ($item->amount / $this->proposal->sub_total) * $this->discount) * ($this->tax->rate_percent / 100));
-
-                        }
-                        else {
+                        } else {
                             $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] = $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] + ($item->amount * ($this->tax->rate_percent / 100));
                         }
                     }
@@ -1064,8 +1036,7 @@ class HomeController extends Controller
 
                 File::put(public_path() . '/' . Files::UPLOAD_FOLDER . '/proposal/sign/' . $imageName, base64_decode($image));
                 Files::uploadLocalFile($imageName, 'proposal/sign', $this->proposal->company_id);
-            }
-            else {
+            } else {
                 if ($request->hasFile('image')) {
                     $imageName = Files::uploadLocalOrS3($request->image, 'proposal/sign', 300);
                 }
@@ -1075,8 +1046,7 @@ class HomeController extends Controller
             $sign->save();
 
             $this->proposal->status = 'accepted';
-        }
-        else {
+        } else {
             $this->proposal->client_comment = $request->comment;
             $this->proposal->status = 'declined';
         }
@@ -1096,8 +1066,7 @@ class HomeController extends Controller
         if ($this->proposal->discount > 0) {
             if ($this->proposal->discount_type == 'percent') {
                 $this->discount = (($this->proposal->discount / 100) * $this->proposal->sub_total);
-            }
-            else {
+            } else {
                 $this->discount = $this->proposal->discount;
             }
         }
@@ -1122,19 +1091,13 @@ class HomeController extends Controller
 
                         if ($this->proposal->calculate_tax == 'after_discount' && $this->discount > 0) {
                             $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] = ($item->amount - ($item->amount / $this->proposal->sub_total) * $this->discount) * ($this->tax->rate_percent / 100);
-
-                        }
-                        else {
+                        } else {
                             $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] = $item->amount * ($this->tax->rate_percent / 100);
                         }
-
-                    }
-                    else {
+                    } else {
                         if ($this->proposal->calculate_tax == 'after_discount' && $this->discount > 0) {
                             $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] = $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] + (($item->amount - ($item->amount / $this->proposal->sub_total) * $this->discount) * ($this->tax->rate_percent / 100));
-
-                        }
-                        else {
+                        } else {
                             $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] = $taxList[$this->tax->tax_name . ': ' . $this->tax->rate_percent . '%'] + ($item->amount * ($this->tax->rate_percent / 100));
                         }
                     }
@@ -1250,13 +1213,12 @@ class HomeController extends Controller
             $milestones = ProjectMilestone::with(['tasks' => function ($q) {
                 return $q->whereNotNull('tasks.start_date');
             }, 'tasks.boardColumn'])->where('project_id', $projectID)->get();
-
         } else {
             $milestones = ProjectMilestone::with(['tasks' => function ($q) use ($taskBoardColumn) {
                 return $q->whereNotNull('tasks.start_date')->where('tasks.board_column_id', '<>', $taskBoardColumn->id);
             }, 'tasks.boardColumn'])
-            ->where('status', 'incomplete')
-            ->where('project_id', $projectID)->get();
+                ->where('status', 'incomplete')
+                ->where('project_id', $projectID)->get();
         }
 
         $nonMilestoneTasks = Task::whereNull('milestone_id')->whereNotNull('start_date')->with('boardColumn');
@@ -1291,11 +1253,11 @@ class HomeController extends Controller
 
 
             foreach ($milestone->tasks as $key2 => $task) {
-                $taskUsers = '<div class="d-inline-flex align-items-center ml-1 text-dark w-180" data-task-id="'.$task->id.'">';
+                $taskUsers = '<div class="d-inline-flex align-items-center ml-1 text-dark w-180" data-task-id="' . $task->id . '">';
 
-                foreach($task->users as $item) {
-                    $taskUsers .= '<img data-toggle="tooltip" class="taskEmployeeImg rounded-circle mr-1" data-original-title="'.$item->name.'"
-                                                     src="'.$item->image_url.'">';
+                foreach ($task->users as $item) {
+                    $taskUsers .= '<img data-toggle="tooltip" class="taskEmployeeImg rounded-circle mr-1" data-original-title="' . $item->name . '"
+                                                     src="' . $item->image_url . '">';
                 }
 
                 $taskUsers .= $task->heading . ' &nbsp; &nbsp;' . view('components.status', ['style' => 'color: ' . $task->boardColumn->label_color, 'value' => $task->boardColumn->column_name, 'color' => 'red'])->render() . '</div>';
@@ -1310,7 +1272,7 @@ class HomeController extends Controller
                     'duration' => (($task->due_date) ? $task->start_date->diffInDays($task->due_date) + 1 : 1),
                     'parent' => $parentID,
                     'priority' => ($key2 + 1),
-                    'color' => $task->boardColumn->label_color.'20',
+                    'color' => $task->boardColumn->label_color . '20',
                     'textColor' => '#09203F',
                     'view' => view('components.cards.task-card', ['task' => $task, 'draggable' => false, 'company' => $company])->render()
                 ];
@@ -1345,11 +1307,11 @@ class HomeController extends Controller
         }
 
         foreach ($nonMilestoneTasks as $key2 => $task) {
-            $taskUsers = '<div class="d-inline-flex align-items-center ml-1 text-dark w-180" data-task-id="'.$task->id.'">';
+            $taskUsers = '<div class="d-inline-flex align-items-center ml-1 text-dark w-180" data-task-id="' . $task->id . '">';
 
-            foreach($task->users as $item) {
-                $taskUsers .= '<img data-toggle="tooltip" class="taskEmployeeImg rounded-circle mr-1" data-original-title="'.$item->name.'"
-                                                 src="'.$item->image_url.'">';
+            foreach ($task->users as $item) {
+                $taskUsers .= '<img data-toggle="tooltip" class="taskEmployeeImg rounded-circle mr-1" data-original-title="' . $item->name . '"
+                                                 src="' . $item->image_url . '">';
             }
 
             $taskUsers .= $task->heading . ' &nbsp; &nbsp;' . view('components.status', ['style' => 'color: ' . $task->boardColumn->label_color, 'value' => $task->boardColumn->column_name, 'color' => 'red'])->render() . '</div>';
@@ -1362,7 +1324,7 @@ class HomeController extends Controller
                 'start_date' => $task->start_date->format('d-m-Y H:i'),
                 'duration' => (($task->due_date) ? $task->start_date->diffInDays($task->due_date) : 1),
                 'priority' => ($key2 + 1),
-                'color' => $task->boardColumn->label_color.'20',
+                'color' => $task->boardColumn->label_color . '20',
                 'textColor' => '#09203F',
                 'view' => view('components.cards.task-card', ['task' => $task, 'draggable' => false, 'company' => $company])->render()
             ];
@@ -1375,12 +1337,10 @@ class HomeController extends Controller
                     'type' => 0
                 ];
             }
-
         }
 
         $ganttData['links'] = array_merge($ganttData['links'], GanttLink::where('project_id', $projectID)->select('id', 'type', 'source', 'target', 'type')->get()->toArray());
 
         return $ganttData;
     }
-
 }

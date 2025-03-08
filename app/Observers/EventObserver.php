@@ -8,6 +8,8 @@ use App\Models\Notification;
 use App\Models\EventAttendee;
 use App\Models\GoogleCalendarModule;
 use Carbon\Carbon;
+use App\Models\EventFile;
+use App\Helper\Files;
 use Google\Service\Exception;
 use Google_Service_Calendar_Event;
 use App\Traits\EmployeeActivityTrait;
@@ -78,6 +80,9 @@ class EventObserver
         $notifyData = ['App\Notifications\EventInvite', 'App\Notifications\EventReminder'];
         Notification::deleteNotification($notifyData, $event->id);
 
+        $event->files()->each(function ($file) {
+            Files::deleteDirectory(EventFile::FILE_PATH . '/' . $file->event_id);
+        });
 
         /* End of deleting event from google calendar */
     }

@@ -8,6 +8,9 @@ use App\Models\StorageSetting;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
 
@@ -43,7 +46,6 @@ return new class extends Migration {
         if ($globalSetting) {
             DB::table($globalSetting->getTable())->where('google_map_key', '')->update(['google_map_key' => null]);
         }
-
     }
 
     private function changeToTextAndEncrypt($model)
@@ -73,7 +75,6 @@ return new class extends Migration {
         }));
 
         return $encryptedFields;
-
     }
 
     /**
@@ -100,12 +101,10 @@ return new class extends Migration {
             if (!is_null($rawValue) && $rawValue !== '') {
                 $fieldsToUpdate[$fieldItem] = $rawValue;
             }
-
         }
 
         try {
             Crypt::decryptString(head($fieldsToUpdate));
-
         } catch (DecryptException $e) {
             $encryptedValues = [];
 
@@ -120,5 +119,4 @@ return new class extends Migration {
             DB::table($model->getTable())->where('id', $model->id)->update($encryptedValues);
         }
     }
-
 };

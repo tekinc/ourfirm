@@ -57,11 +57,15 @@
                 @endphp
                 @foreach($weekTimesheet->entries->groupBy('task_id') as $key => $entries)
                 <tr>
-                    <td class="px-1 employee-td fixed-column bg-white z-10">
+                    <td class="px-1 employee-td fixed-column bg-white" style="position: relative;">
                         <div class="form-group d-flex justify-content-between">
-                        <select class="form-control week-task" name="task_ids[{{ $key }}]">
+                        <select class="form-control week-task select-picker" name="task_ids[{{ $key }}]" data-container="body" data-live-search="true">
                             @foreach ($tasksForWeek as $task)
-                                <option value="{{ $task->id }}" {{ $key == $task->id ? 'selected' : '' }}>
+                                <option value="{{ $task->id }}" {{ $key == $task->id ? 'selected' : '' }} 
+                                    data-content="<h5 class='f-13 text-darkest-grey mb-0'>{{ $task->heading }}</h5>
+                                    @if($task->project)
+                                        <div class='text-muted f-11'>{{ $task->project->project_name }}</div>
+                                    @endif">
                                     {{ $task->heading }}
                                 </option>
                             @endforeach
@@ -116,11 +120,14 @@
 
                     
                 <tr>
-                    <td class="px-1 employee-td fixed-column bg-white">
+                    <td class="px-1 employee-td fixed-column bg-white" style="position: relative;">
                         <div class="form-group d-flex justify-content-between">
-                            <select class="form-control week-task" name="task_ids[{{ $key }}]">
+                            <select class="form-control week-task select-picker" name="task_ids[{{ $key }}]" data-container="body" data-live-search="true">
                                 @foreach ($tasksForWeek as $task)
-                                    <option value="{{ $task->id }}">{{ $task->heading }}</option>
+                                    <option value="{{ $task->id }}" data-content="<h5 class='f-13 text-darkest-grey mb-0'>{{ $task->heading }}</h5>
+                                    @if($task->project)
+                                        <div class='text-muted f-11'>{{ $task->project->project_name }}</div>
+                                    @endif">{{ $task->heading }}</option>
                                 @endforeach
                             </select>
 
@@ -148,7 +155,7 @@
 
             <x-slot name="tfoot">
                 <tr>
-                    <td class="font-weight-semibold fixed-column f-16">
+                    <td class="font-weight-semibold f-16">
                         <span class="f-16">@lang('app.total')</span>
                     </td>
                     @foreach ($weekDates as $key2 => $day)
@@ -181,8 +188,16 @@
             $clone.find('.week-task').attr('name', 'task_ids[' + entryCount + ']');
             $clone.find('.week-date').attr('name', 'dates[' + entryCount + '][]');
             $clone.find('.week-hours').attr('name', 'hours[' + entryCount + '][]').val(0);
+            let selectTask = $clone.find('select');
+
+            $clone.find('.bootstrap-select').remove();
+
+            $clone.find('td:first-child .form-group').prepend(selectTask);
+
             
             $clone.appendTo('#weekly-timesheet-table tbody');
+            // $('#attendance-data .select-picker').selectpicker('destroy');
+            $('#attendance-data .select-picker').selectpicker('refresh');
             entryCount++;
             
             return false;
@@ -279,6 +294,7 @@
             $('.week-task, .week-hours').prop('disabled', false);
         } else {
             $('.week-task, .week-hours').prop('disabled', true);
+            $('.week-task').selectpicker('refresh');
         }
     });
 </script>

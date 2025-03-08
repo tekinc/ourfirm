@@ -472,6 +472,7 @@ return array(
     'companyNameTooltip' => 'Add the full name of your company. The company name visible to the left sidebar will be changed from theme setting',
     'sendMonthlyReportTooltip' => 'The email will include the attendance details of all employees for the selected month.',
     'defaultAddressInfo' => 'The attendance and other modules utilize the default business address, but when creating records, you have the option to select a different address as default address',
+    'dealCloseDateMsg' => 'The data displayed is filtered based on the deal close date.',
     'bankTransactionSuccess' => 'Bank Transaction Success',
     'selectBank' => 'Select bank account',
     'selectDate' => 'Select Date',

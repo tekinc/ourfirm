@@ -174,10 +174,19 @@ class EventCalendarController extends AccountBaseController
 
         if ($request->all_employees) {
             $attendees = User::allEmployees(null, false);
-
-            foreach ($attendees as $attendee) {
-                EventAttendee::create(['user_id' => $attendee->id, 'event_id' => $event->id]);
-            }
+            
+            // Prepare bulk insert data
+            $attendeeData = $attendees->map(function($attendee) use ($event) {
+                return [
+                    'user_id' => $attendee->id,
+                    'event_id' => $event->id,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ];
+            })->toArray();
+            
+            // Bulk insert
+            EventAttendee::insert($attendeeData);
 
             event(new EventInviteEvent($event, $attendees));
         }
@@ -316,10 +325,21 @@ class EventCalendarController extends AccountBaseController
 
         if ($request->all_employees) {
             $attendees = User::allEmployees(null, false);
+            
+            // Prepare bulk insert data
+            $attendeeData = $attendees->map(function($attendee) use ($event) {
+                return [
+                    'user_id' => $attendee->id,
+                    'event_id' => $event->id,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ];
+            })->toArray();
+            
+            // Bulk insert
+            EventAttendee::insert($attendeeData);
 
-            foreach ($attendees as $attendee) {
-                EventAttendee::create(['user_id' => $attendee->id, 'event_id' => $event->id]);
-            }
+            event(new EventInviteEvent($event, $attendees));
         }
 
         if ($request->user_id) {
