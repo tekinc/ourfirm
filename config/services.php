@@ -24,10 +24,54 @@ return [
         'token' => env('POSTMARK_TOKEN'),
     ],
 
+    'authorize' => [
+        'login' => env('AUTHORIZE_PAYMENT_API_LOGIN_ID'),
+        'transaction' => env('AUTHORIZE_PAYMENT_TRANSACTION_KEY'),
+        'sandbox' => env('AUTHORIZE_SANDBOX', true),
+    ],
+
+    'square' => [
+        'application_id' => env('SQUARE_APPLICATION_ID'),
+        'access_token' => env('SQUARE_ACCESS_TOKEN'),
+        'location_id' => env('SQUARE_ACCESS_TOKEN'),
+        'environment' => env('SQUARE_ENVIRONMENT', 'sandbox'),
+    ],
+
     'ses' => [
         'key' => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'telegram-bot-api' => [
+        'token' => env('TELEGRAM_BOT_TOKEN', 'YOUR BOT TOKEN HERE')
+    ],
+
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT'),
+        'redirect_uri' => (env('APP_URL') . '/account/settings/google-auth'),
+        // Let the user know what we will be using from his Google account.
+        'scopes' => [
+            // Getting access to the user's email.
+            \Google_Service_Oauth2::USERINFO_EMAIL,
+            \Google_Service_Oauth2::USERINFO_PROFILE,
+            // Managing the user's calendars and events.
+            \Google_Service_Calendar::CALENDAR,
+        ],
+        // Enables automatic token refresh.
+        'approval_prompt' => 'force',
+        'access_type' => 'offline',
+        // Enables incremental scopes (useful if in the future we need access to another type of data).
+        'include_granted_scopes' => true,
+    ],
+
+    'sentry' => [
+        'enabled' => env('SENTRY_ENABLED', false)
+    ],
+    'onesignal' => [
+        'app_id' => 'YOUR-APP-ID-HERE',
+        'rest_api_key' => 'YOUR-REST-API-KEY-HERE',
+    ],
 ];
