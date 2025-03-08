@@ -171,6 +171,8 @@
    "php artisan cache:clear"
 ],
         "post-autoload-dump": [
+		 "chmod -R 755 bootstrap\/cache",
+   "php artisan cache:clear",
 			"mkdir -p ./bootstrap/cache/",
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
