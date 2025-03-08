@@ -14,6 +14,7 @@ return [
     */
 
     'default' => env('MAIL_MAILER', 'smtp'),
+    'verified' => env('MAIL_FROM_VERIFIED_EMAIL', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -43,6 +44,8 @@ return [
             'password' => env('MAIL_PASSWORD'),
             'timeout' => null,
             'auth_mode' => null,
+            'verify_peer' => false,
+            'local_domain' => env('MAIL_EHLO_DOMAIN') ?: null,
         ],
 
         'ses' => [
