@@ -1,0 +1,21 @@
+<?php 
+return [
+  'saveSettings' => 'Uložit nastavení',
+  'cookiePreferences' => 'Předvolby souborů cookie',
+  'title' => 'Používáme cookies!',
+  'description' => 'Dobrý den, tato webová stránka používá nezbytné soubory cookie k zajištění správného fungování a sledovací soubory cookie, abychom pochopili, jak s nimi komunikujete. Ten bude nastaven až po souhlasu.',
+  'letMeChoose' => 'Nech mě vybrat',
+  'acceptAll' => 'Přijmout vše',
+  'rejectAll' => 'Odmítnout vše',
+  'acceptNecessary' => 'Přijmout Nezbytné',
+  'cookieUsage' => 'Používání souborů cookie',
+  'cookieUsageDescription' => 'Soubory cookie používám k zajištění základních funkcí webu a ke zlepšení vašeho online zážitku. Pro každou kategorii si můžete vybrat, zda se chcete přihlásit/odhlásit, kdykoli budete chtít. Další podrobnosti týkající se souborů cookie a dalších citlivých údajů.',
+  'strictlyNecessaryCookies' => 'Nezbytně nutné cookies',
+  'strictlyNecessaryCookiesDescription' => 'Tyto soubory cookie jsou nezbytné pro správné fungování mých webových stránek. Bez těchto cookies by web nefungoval správně',
+  'performanceAnalyticsCookies' => 'Soubory cookie výkonu a Analytics',
+  'performanceAnalyticsCookiesDescription' => 'Tyto soubory cookie umožňují webu zapamatovat si volby, které jste provedli v minulosti',
+  'moreInformation' => 'Více informací',
+  'moreInformationDescription' => 'Máte-li jakékoli dotazy týkající se našich zásad týkajících se souborů cookie a vašich voleb, prosím',
+  'advertisementTitle' => 'Soubory cookie pro reklamu a cílení',
+  'advertisementTitleDescription' => 'Tyto soubory cookie shromažďují informace o tom, jak web používáte, které stránky jste navštívili a na které odkazy jste klikli. Všechna data jsou anonymizována a nelze je použít k vaší identifikaci',
+];
