@@ -166,6 +166,10 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
+		"post-install-cmd": [
+   "chmod -R 755 bootstrap\/cache",
+   "php artisan cache:clear"
+],
         "post-autoload-dump": [
 			"mkdir -p ./bootstrap/cache/",
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
