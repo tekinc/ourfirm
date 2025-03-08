@@ -53,6 +53,7 @@
     "prefer-stable": true,
     "scripts": {
         "post-autoload-dump": [
+		  "mkdir -p ./bootstrap/cache/",
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
         ],
